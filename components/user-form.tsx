@@ -17,7 +17,7 @@ type UserInfoForm = {
   name: string;
   address: string;
   productIds: Array<Product["id"]>;
-  message: "string";
+  message: string;
 }
 
 export function UserForm() {
