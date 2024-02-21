@@ -11,8 +11,9 @@ import { Button } from "@/components/ui/button";
 
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useState } from "react";
-import { Product, Products } from "./Database";
+import { Product, Products, UserInteractions } from "./Database";
 import { generateUserDescriptionFromTheServer } from "@/app/lib/actions";
+import { IdDocument } from "langchain/vectorstores/googlevertexai";
 
 
 
@@ -55,6 +56,11 @@ export function UserForm() {
               <div className="flex-1">
                 <div className="flex items-center justify-center p-6">
                   <div className="grid gap-2 w-full sm:gap-4">
+
+                    <h3 className="text-lg font-medium tracking-wide sm:text-xl md:text-2xl">
+                      User Description
+                    </h3>
+
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="name">Name</Label>
@@ -67,18 +73,25 @@ export function UserForm() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="address">Address</Label>
+                        <Label htmlFor="name">Age</Label>
                         <Input
-                          id="address"
-                          placeholder="Enter your address"
+                          type="number"
+                          id="name"
+                          placeholder="Enter your name"
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          value={values.address}
+                          value={values.name}
                         />
                       </div>
                     </div>
+
+                    <h3 className="text-lg font-medium tracking-wide sm:text-xl md:text-2xl">
+                      Purchases history
+                    </h3>
+
+
                     <div className="space-y-2">
-                      <Label htmlFor="purchases">Purchases</Label>
+                      <Label htmlFor="purchases">Product descriptions</Label>
                       <div className="grid gap-2">
 
 
@@ -92,12 +105,53 @@ export function UserForm() {
                               onChange={handleChange}
                               onBlur={handleBlur}
                             />
+                            {name} ==>
                             {description}
-                          </Label>)}
+                          </Label>)
+                        }
+
+                        <div className="space-y-2">
+                          <Label htmlFor="name">Another description</Label>
+                          <Input
+                            id="name"
+                            placeholder="another product description"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.name}
+                          />
+                        </div>
                       </div>
                     </div>
+
+
+                    <h3 className="text-lg font-medium tracking-wide sm:text-xl md:text-2xl">
+                      User hand written text
+                    </h3>
+
+
                     <div className="space-y-2">
-                      <Label htmlFor="message">Message</Label>
+                      <Label htmlFor="message">User emails, customer service interactions, chatbot history...</Label>
+
+                      <div className="grid gap-2">
+
+
+                        {UserInteractions.map(({ id, text }) =>
+                          <Label key={id} htmlFor={id}>
+                            <input
+                              type="checkbox"
+                              name="productDescriptions"
+                              id={id}
+                              value={text}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                            />
+                            {text}
+                          </Label>)
+                        }
+
+                      </div>
+
+
                       <Textarea
                         className="min-h-[8rem] max-h-[12rem]"
                         id="message"
@@ -107,7 +161,7 @@ export function UserForm() {
                         value={values.message}
                       />
                     </div>
-                    <Button type="submit">
+                    <Button type="submit" disabled={loading}>
                       <span className="flex items-center">
                         {loading && <LoaderIcon className="animate-spin h-5 w-5 mr-2" />}
                         Send Form
