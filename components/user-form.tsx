@@ -16,12 +16,12 @@ import { Product, Products } from "./ExistingProducts";
 type UserInfoForm = {
   name: string;
   address: string;
-  productIds: Array<Product["id"]>;
+  productDescriptions: Array<Product["description"]>;
   message: string;
 }
 
 export function UserForm() {
-  const [initialValues] = useState<UserInfoForm>({ name: "", address: "", productIds: [], message: "" })
+  const [initialValues] = useState<UserInfoForm>({ name: "", address: "", productDescriptions: [], message: "" })
 
   return (
     <Formik<UserInfoForm> initialValues={initialValues} onSubmit={console.log}
@@ -73,9 +73,9 @@ export function UserForm() {
                           <Label key={id} htmlFor={name}>
                             <input
                               type="checkbox"
-                              name="productIds"
+                              name="productDescriptions"
                               id={name}
-                              value={id}
+                              value={description}
                               onChange={handleChange}
                               onBlur={handleBlur}
                             />
