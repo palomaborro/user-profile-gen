@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useState } from "react";
-import { Product, Products } from "./ExistingProducts";
+import { Product, Products } from "./Database";
 import { generateUserDescriptionFromTheServer } from "@/app/lib/actions";
 
 

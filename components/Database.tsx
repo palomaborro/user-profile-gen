@@ -36,3 +36,20 @@ export const Products: Product[] = [
       "Immerse yourself in a unique sensory experience with our exquisite women's perfume, blending captivating floral and woody notes for an aura of elegance and femininity.",
   },
 ];
+
+export interface UserInteraction {
+  id: string,
+  text: string;
+}
+
+export const UserInteractions: UserInteraction[] = [
+  {
+    id: "1",
+    text: "User Description"
+  },
+  {
+    id: "2",
+    text: "Purchases history"
+  }
+];
+
