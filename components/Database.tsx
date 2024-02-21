@@ -38,18 +38,17 @@ export const Products: Product[] = [
 ];
 
 export interface UserInteraction {
-  id: string,
+  id: string;
   text: string;
 }
 
 export const UserInteractions: UserInteraction[] = [
   {
     id: "1",
-    text: "User Description"
+    text: "I hope this email finds you well. I recently purchased one of your products, Low Consumption Light Bulbs, and unfortunately, I've encountered some issues with its functionality. Despite following the user manual carefully, it turns out after a few minutes. I understand that sometimes these things can happen, and I'm reaching out to kindly request assistance in resolving this matter. I would appreciate any guidance or support you can offer to help rectify the situation. Thank you for your attention to this matter, and I look forward to hearing from you soon.",
   },
   {
     id: "2",
-    text: "Purchases history"
-  }
+    text: "I'm writing to let you know that the Home Oven I bought from your company is a total disaster. It's malfunctioning like crazy, and I'm really fed up with it. I followed the instructions, but it's still acting up. Seriously, what's going on with your quality control? I expect better from a supposedly reputable company like yours. You better fix this ASAP or I'll be taking my business elsewhere.",
+  },
 ];
-
