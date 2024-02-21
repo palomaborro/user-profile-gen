@@ -4,27 +4,28 @@ import { PromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
 import { JsonOutputFunctionsParser } from "langchain/output_parsers";
 import { Product, UserInteraction } from "./Database";
+import { UserInferredInfo } from "./types";
 
 type UserInfoServer = {
   name: string;
   age: number;
   productDescriptions: Array<Product["description"]>;
-  userInteraction: Array<UserInteraction["text"]>;
+  userInteractions: Array<UserInteraction["text"]>;
 };
 
 export const generateUserDescriptionFromTheServer: ({
   productDescriptions,
   name,
   age,
-  userInteraction,
-}: UserInfoServer) => Promise<string> = async ({
+  userInteractions,
+}: UserInfoServer) => Promise<UserInferredInfo> = async ({
   productDescriptions,
   name,
   age,
-  userInteraction,
+  userInteractions,
 }) => {
-  const products = productDescriptions.join(". ");
-  const interactions = userInteraction.join(". ");
+  const products = productDescriptions.map((description) => `* ${description}\n\n`).join();
+  const interactions = userInteractions.map((text) => `* ${text}\n\n`).join();
   // return new Promise((resolve) =>
   //   setTimeout(
   //     () =>
@@ -35,7 +36,38 @@ export const generateUserDescriptionFromTheServer: ({
   //   )
   // );
   const chain = PromptTemplate.fromTemplate(
-    `You are a personal shopper. Imagine you have to create a user description based on the user purchase history. The user's name is {name}, age is {age}, and they have bought the following products: ${products}. They have had the following interactions: ${interactions}. Generate a brief description about the person who would buy these products. What are they like? What do they like? What are they passionate about? Stick to the facts and avoid making assumptions. Example description: "This person is a tech enthusiast who enjoys cooking and is interested in home automation."`
+    `You are a personal shopper. Imagine you have to create a user description based on:
+
+    * the description of products he has purchased until now
+    * the user name
+    * the user age
+    * a set of free text examples written by the user.
+    
+    The steps to follow are
+    1. The above mentioned information will be given to you.
+    2. You will help me to answer the following facts about the user in the following structure. Stick to the facts and avoid making assumptions. Do not summarize information we already know from the input, deduce new information based on you experience.
+
+
+    * the user name
+    ===========================
+    {name}
+    ===========================
+
+    * the user age
+    ===========================
+    {age}
+    ===========================
+
+    * the description of products he has purchased until now
+    ===========================
+    {products}
+    ===========================
+
+
+    set of free text examples written by the user
+    ===========================
+    {interactions}
+    ===========================`
   )
     .pipe(
       new ChatOpenAI({
@@ -50,12 +82,20 @@ export const generateUserDescriptionFromTheServer: ({
             parameters: {
               type: "object",
               properties: {
-                user_description: {
+                user_gender: {
                   type: "string",
-                  description: "The description of the user",
+                  description: "reason if the user is a man or a women and why in two sentences",
                 },
+                user_basic_interests: {
+                  type: "string",
+                  description: "reason of the user basic interests and why in two sentences",
+                },
+                user_communication_style: {
+                  type: "string",
+                  description: "reason what is his communication style and why in two sentences",
+                }
               },
-              required: ["user_description"],
+              required: ["user_gender", "user_basic_interests", "user_communication_style"],
             },
           },
         ],
@@ -66,10 +106,9 @@ export const generateUserDescriptionFromTheServer: ({
 
   return chain
     .invoke({
-      productDescriptions: products,
+      products,
       name,
       age: age.toString(),
-      userInteraction: interactions,
-    })
-    .then((result: string) => result);
+      interactions,
+    });
 };

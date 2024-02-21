@@ -17,13 +17,14 @@ import {
   UserInteractions,
 } from "../app/lib/Database";
 import { generateUserDescriptionFromTheServer } from "@/app/lib/actions";
+import { UserInferredInfo } from "@/app/lib/types";
 
 type UserInfoForm = {
   name: string;
   age: number;
   productDescriptions: Array<Product["description"]>;
   customProductDescription: string;
-  userInteraction: Array<UserInteraction["text"]>;
+  userInteractions: Array<UserInteraction["text"]>;
   customUserInteraction: string;
 };
 
@@ -33,16 +34,11 @@ export function UserForm() {
     age: 0,
     productDescriptions: [],
     customProductDescription: "",
-    userInteraction: [],
+    userInteractions: [],
     customUserInteraction: "",
   });
   const [loading, setLoading] = useState(false);
-  const [userDescription, setUserDescription] = useState(
-    "unknown user description"
-  );
-  const [userCommunication, setUserCommunication] = useState(
-    "unknown user communication"
-  );
+  const [userInferredInfo, setUserInferredInfo] = useState<UserInferredInfo>();
 
   return (
     <Formik<UserInfoForm>
@@ -51,11 +47,12 @@ export function UserForm() {
         console.log({ values });
         setLoading(true);
 
-        generateUserDescriptionFromTheServer(values as UserInfoForm)
-          .then(({ user_description, user_communication }) => {
-            setUserDescription(user_description);
-            setUserCommunication(user_communication);
-          })
+        generateUserDescriptionFromTheServer({
+          ...values,
+          productDescriptions: [...values.productDescriptions, values.customProductDescription],
+          userInteractions: [...values.userInteractions, values.customUserInteraction]
+        })
+          .then(setUserInferredInfo)
           .finally(() => setLoading(false));
       }}
     >
@@ -149,7 +146,7 @@ export function UserForm() {
                           <Label key={id} htmlFor={id}>
                             <input
                               type="checkbox"
-                              name="userInteraction"
+                              name="userInteractions"
                               id={id}
                               value={text}
                               onChange={handleChange}
@@ -187,16 +184,22 @@ export function UserForm() {
                 <div className="p-6 grid gap-4">
                   <div className="space-y-2">
                     <h3 className="text-lg font-medium tracking-wide sm:text-xl md:text-2xl">
-                      User Description
+                      User Gender
                     </h3>
                     <p className="text-sm leading-loose text-gray-500 md:text-base dark:text-gray-400">
-                      {userDescription}
+                      {userInferredInfo?.user_gender}
+                    </p>
+                    <h3 className="text-lg font-medium tracking-wide sm:text-xl md:text-2xl">
+                      Interests
+                    </h3>
+                    <p className="text-sm leading-loose text-gray-500 md:text-base dark:text-gray-400">
+                      {userInferredInfo?.user_basic_interests}
                     </p>
                     <h3 className="text-lg font-medium tracking-wide sm:text-xl md:text-2xl">
                       User Communication
                     </h3>
                     <p className="text-sm leading-loose text-gray-500 md:text-base dark:text-gray-400">
-                      {userCommunication}
+                      {userInferredInfo?.user_communication_style}
                     </p>
                   </div>
                 </div>
