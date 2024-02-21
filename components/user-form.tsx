@@ -15,7 +15,7 @@ import {
   Products,
   UserInteraction,
   UserInteractions,
-} from "./Database";
+} from "../app/lib/Database";
 import { generateUserDescriptionFromTheServer } from "@/app/lib/actions";
 
 type UserInfoForm = {
@@ -24,6 +24,7 @@ type UserInfoForm = {
   productDescriptions: Array<Product["description"]>;
   customProductDescription: string;
   userInteraction: Array<UserInteraction["text"]>;
+  customUserInteraction: string;
 };
 
 export function UserForm() {
@@ -33,10 +34,14 @@ export function UserForm() {
     productDescriptions: [],
     customProductDescription: "",
     userInteraction: [],
+    customUserInteraction: "",
   });
   const [loading, setLoading] = useState(false);
   const [userDescription, setUserDescription] = useState(
     "unknown user description"
+  );
+  const [userCommunication, setUserCommunication] = useState(
+    "unknown user communication"
   );
 
   return (
@@ -46,12 +51,11 @@ export function UserForm() {
         console.log({ values });
         setLoading(true);
 
-        generateUserDescriptionFromTheServer({
-          products:
-            values.productDescriptions.join(", ") +
-            values.customProductDescription,
-        })
-          .then((userDescription) => setUserDescription(userDescription))
+        generateUserDescriptionFromTheServer(values as UserInfoForm)
+          .then(({ user_description, user_communication }) => {
+            setUserDescription(user_description);
+            setUserCommunication(user_communication);
+          })
           .finally(() => setLoading(false));
       }}
     >
@@ -145,7 +149,7 @@ export function UserForm() {
                           <Label key={id} htmlFor={id}>
                             <input
                               type="checkbox"
-                              name="productDescriptions"
+                              name="userInteraction"
                               id={id}
                               value={text}
                               onChange={handleChange}
@@ -159,10 +163,11 @@ export function UserForm() {
                       <Textarea
                         className="min-h-[8rem] max-h-[12rem]"
                         id="message"
+                        name="customUserInteraction"
                         placeholder="Enter your message"
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        value={values.userInteraction}
+                        value={values.customUserInteraction}
                       />
                     </div>
                     <Button type="submit" disabled={loading}>
@@ -186,6 +191,12 @@ export function UserForm() {
                     </h3>
                     <p className="text-sm leading-loose text-gray-500 md:text-base dark:text-gray-400">
                       {userDescription}
+                    </p>
+                    <h3 className="text-lg font-medium tracking-wide sm:text-xl md:text-2xl">
+                      User Communication
+                    </h3>
+                    <p className="text-sm leading-loose text-gray-500 md:text-base dark:text-gray-400">
+                      {userCommunication}
                     </p>
                   </div>
                 </div>
