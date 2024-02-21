@@ -12,6 +12,9 @@ import { Button } from "@/components/ui/button";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useState } from "react";
 import { Product, Products } from "./ExistingProducts";
+import { generateUserDescriptionFromTheServer } from "@/app/lib/actions";
+
+
 
 type UserInfoForm = {
   name: string;
@@ -21,10 +24,20 @@ type UserInfoForm = {
 }
 
 export function UserForm() {
+
   const [initialValues] = useState<UserInfoForm>({ name: "", address: "", productDescriptions: [], message: "" })
+  const [loading, setLoading] = useState(false)
+  const [userDescription, setUserDescription] = useState("unknown user description")
 
   return (
-    <Formik<UserInfoForm> initialValues={initialValues} onSubmit={console.log}
+    <Formik<UserInfoForm> initialValues={initialValues} onSubmit={(values) => {
+      console.log({ values })
+      setLoading(true);
+
+      generateUserDescriptionFromTheServer({ products: values.productDescriptions.join(", ") })
+        .then((userDescription) => setUserDescription(userDescription))
+        .finally(() => setLoading(false));
+    }}
     >
 
       {({
@@ -96,7 +109,7 @@ export function UserForm() {
                     </div>
                     <Button type="submit">
                       <span className="flex items-center">
-                        <LoaderIcon className="animate-spin h-5 w-5 mr-2" />
+                        {loading && <LoaderIcon className="animate-spin h-5 w-5 mr-2" />}
                         Send Form
                       </span>
                     </Button>
@@ -109,18 +122,10 @@ export function UserForm() {
                 <div className="p-6 grid gap-4">
                   <div className="space-y-2">
                     <h3 className="text-lg font-medium tracking-wide sm:text-xl md:text-2xl">
-                      Purchase History
+                      User Description
                     </h3>
                     <p className="text-sm leading-loose text-gray-500 md:text-base dark:text-gray-400">
-                      You can select multiple options.
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-medium tracking-wide sm:text-xl md:text-2xl">
-                      Message
-                    </h3>
-                    <p className="text-sm leading-loose text-gray-500 md:text-base dark:text-gray-400">
-                      Enter your message here.
+                      {userDescription}
                     </p>
                   </div>
                 </div>
