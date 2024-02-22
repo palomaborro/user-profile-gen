@@ -142,7 +142,7 @@ export function UserForm() {
                           <Input
                             name="customProductDescription"
                             id="customProductDescription"
-                            placeholder="another product description"
+                            placeholder="Another product description"
                             onChange={handleChange}
                             onBlur={handleBlur}
                           />
