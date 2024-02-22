@@ -79,12 +79,12 @@ export const generateUserDescriptionFromTheServer: ({
                 user_gender: {
                   type: "string",
                   description:
-                    "reason if the user is a man or a women and why in two sentences. Take in consideration the name gender. Peter is usually a man, Mariah a woman.",
+                    "reason if the user is a man or a woman. Take in consideration the name gender. Peter is usually a man, Mariah a woman.",
                 },
                 user_basic_interests: {
                   type: "string",
                   description:
-                    "reason of the user basic interests and why in two sentences based on the purchase history, age and interactions.",
+                    "reason of the user basic interests and why in two sentences based on the purchase history, age and interactions. If there is no purchase history, just say there is not enough information.",
                 },
                 user_communication_style: {
                   type: "string",
