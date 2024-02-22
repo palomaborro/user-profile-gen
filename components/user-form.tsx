@@ -223,7 +223,10 @@ export function UserForm() {
                       User Inferred Information
                     </h3>
                     {userInferredInfos.map((userInferredInfo, index) => (
-                      <div key={index}>
+                      <div
+                        key={index}
+                        className="border border-gray-500 shadow-left-lg p-4 mb-4 rounded"
+                      >
                         <h2 className="text-xl tracking-wide">
                           Interaction {index + 1}:
                         </h2>
@@ -238,7 +241,7 @@ export function UserForm() {
                         <h3 className="text-l tracking-wide">
                           Communication style
                         </h3>
-                        <p className="text-sm leading-loose text-gray-500 mb-6">
+                        <p className="text-sm leading-loose text-gray-500">
                           {userInferredInfo.user_communication_style}
                         </p>
                       </div>
