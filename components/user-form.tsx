@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form } from "formik";
 import { useState } from "react";
 import {
   Product,
@@ -49,8 +49,14 @@ export function UserForm() {
 
         generateUserDescriptionFromTheServer({
           ...values,
-          productDescriptions: [...values.productDescriptions, values.customProductDescription],
-          userInteractions: [...values.userInteractions, values.customUserInteraction]
+          productDescriptions: [
+            ...values.productDescriptions,
+            values.customProductDescription,
+          ],
+          userInteractions: [
+            ...values.userInteractions,
+            values.customUserInteraction,
+          ],
         })
           .then(setUserInferredInfo)
           .finally(() => setLoading(false));
@@ -60,17 +66,21 @@ export function UserForm() {
         <Form>
           <div
             key="1"
-            className="grid h-[600px] min-h-[600px] w-full md:h-[500px] lg:min-h-[500px] xl:h-[600px] grid-cols-1 md:grid-cols-2 border border-gray-200 dark:border-gray-700"
+            className="grid min-h-[600px] w-full md:min-h-[500px] lg:min-h-[500px] xl:min-h-[600px] grid-cols-1 md:grid-cols-2 border border-gray-500 mb-4 rounded font-light"
           >
-            <div className="flex flex-col border-t md:border-t-0 md:border-l dark:border-gray-700">
+            <div className="flex flex-col border-r border-gray-500">
               <div className="flex-1">
                 <div className="flex items-center justify-center p-6">
                   <div className="grid gap-2 w-full sm:gap-4">
-                    <h3 className="text-lg font-medium tracking-wide sm:text-xl md:text-2xl">
-                      User Description
+                    <h3 className="text-lg tracking-wide sm:text-xl md:text-2xl">
+                      User Registration information
                     </h3>
 
-                    <div className="grid sm:grid-cols-2 gap-4">
+                    <Label htmlFor="message">
+                      Required information to enter when registering a new user
+                    </Label>
+
+                    <div className="grid sm:grid-cols-2 gap-4 mb-4">
                       <div className="space-y-2">
                         <Label htmlFor="name">Name</Label>
                         <Input
@@ -94,15 +104,23 @@ export function UserForm() {
                       </div>
                     </div>
 
-                    <h3 className="text-lg font-medium tracking-wide sm:text-xl md:text-2xl">
+                    <h3 className="text-lg tracking-wide sm:text-xl md:text-2xl">
                       Purchase history
                     </h3>
 
+                    <Label htmlFor="message">
+                      User purchase history on the app with product names and
+                      descriptions
+                    </Label>
+
                     <div className="space-y-2">
-                      <Label htmlFor="purchases">Product descriptions</Label>
                       <div className="grid gap-2">
                         {Products.map(({ id, name, description }) => (
-                          <Label key={id} htmlFor={name}>
+                          <Label
+                            key={id}
+                            htmlFor={name}
+                            className="flex items-start text-justify"
+                          >
                             <input
                               type="checkbox"
                               name="productDescriptions"
@@ -110,15 +128,16 @@ export function UserForm() {
                               value={description}
                               onChange={handleChange}
                               onBlur={handleBlur}
+                              className="mr-3 mt-1"
                             />
-                            {name} {"==>"}
+                            {name} {"==> "}
                             {description}
                           </Label>
                         ))}
 
-                        <div className="space-y-2">
+                        <div className="space-y-2 mb-4">
                           <Label htmlFor="customProductDescription">
-                            Another description
+                            Custom description:
                           </Label>
                           <Input
                             name="customProductDescription"
@@ -131,7 +150,7 @@ export function UserForm() {
                       </div>
                     </div>
 
-                    <h3 className="text-lg font-medium tracking-wide sm:text-xl md:text-2xl">
+                    <h3 className="text-lg tracking-wide sm:text-xl md:text-2xl">
                       User hand written text
                     </h3>
 
@@ -143,7 +162,11 @@ export function UserForm() {
 
                       <div className="grid gap-2">
                         {UserInteractions.map(({ id, text }) => (
-                          <Label key={id} htmlFor={id}>
+                          <Label
+                            className="text-justify flex items-start"
+                            key={id}
+                            htmlFor={id}
+                          >
                             <input
                               type="checkbox"
                               name="userInteractions"
@@ -151,21 +174,27 @@ export function UserForm() {
                               value={text}
                               onChange={handleChange}
                               onBlur={handleBlur}
+                              className="mr-3 mt-1"
                             />
                             {text}
                           </Label>
                         ))}
                       </div>
 
-                      <Textarea
-                        className="min-h-[8rem] max-h-[12rem]"
-                        id="message"
-                        name="customUserInteraction"
-                        placeholder="Enter your message"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.customUserInteraction}
-                      />
+                      <div className="space-y-2 mb-4">
+                        <Label htmlFor="customProductDescription">
+                          Custom user interaction:
+                        </Label>
+                        <Textarea
+                          className="min-h-[8rem] max-h-[12rem]"
+                          id="message"
+                          name="customUserInteraction"
+                          placeholder="Enter your message"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.customUserInteraction}
+                        />
+                      </div>
                     </div>
                     <Button type="submit" disabled={loading}>
                       <span className="flex items-center">
@@ -179,26 +208,26 @@ export function UserForm() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col border-t md:border-t-0 md:border-l">
+            <div className="flex flex-col">
               <div className="flex-1">
                 <div className="p-6 grid gap-4">
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium tracking-wide sm:text-xl md:text-2xl">
+                    <h3 className="text-lg tracking-wide sm:text-xl md:text-2xl">
                       User Gender
                     </h3>
-                    <p className="text-sm leading-loose text-gray-500 md:text-base dark:text-gray-400">
+                    <p className="text-sm leading-loose md:text-base">
                       {userInferredInfo?.user_gender}
                     </p>
-                    <h3 className="text-lg font-medium tracking-wide sm:text-xl md:text-2xl">
+                    <h3 className="text-lg tracking-wide sm:text-xl md:text-2xl">
                       Interests
                     </h3>
-                    <p className="text-sm leading-loose text-gray-500 md:text-base dark:text-gray-400">
+                    <p className="text-sm leading-loose md:text-base">
                       {userInferredInfo?.user_basic_interests}
                     </p>
-                    <h3 className="text-lg font-medium tracking-wide sm:text-xl md:text-2xl">
+                    <h3 className="text-lg tracking-wide sm:text-xl md:text-2xl">
                       User Communication
                     </h3>
-                    <p className="text-sm leading-loose text-gray-500 md:text-base dark:text-gray-400">
+                    <p className="text-sm leading-loose md:text-base">
                       {userInferredInfo?.user_communication_style}
                     </p>
                   </div>
@@ -212,7 +241,7 @@ export function UserForm() {
   );
 }
 
-function LoaderIcon(props) {
+function LoaderIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
