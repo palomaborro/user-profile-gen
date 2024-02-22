@@ -38,7 +38,9 @@ export function UserForm() {
     customUserInteraction: "",
   });
   const [loading, setLoading] = useState(false);
-  const [userInferredInfo, setUserInferredInfo] = useState<UserInferredInfo>();
+  const [userInferredInfos, setUserInferredInfos] = useState<
+    UserInferredInfo[]
+  >([]);
 
   return (
     <Formik<UserInfoForm>
@@ -58,7 +60,12 @@ export function UserForm() {
             values.customUserInteraction,
           ],
         })
-          .then(setUserInferredInfo)
+          .then((newUserInferredInfo) => {
+            setUserInferredInfos((prevUserInferredInfos) => [
+              ...prevUserInferredInfos,
+              newUserInferredInfo,
+            ]);
+          })
           .finally(() => setLoading(false));
       }}
     >
@@ -212,24 +219,30 @@ export function UserForm() {
               <div className="flex-1">
                 <div className="p-6 grid gap-4">
                   <div className="space-y-2">
-                    <h3 className="text-lg tracking-wide sm:text-xl md:text-2xl">
-                      User Gender
+                    <h3 className="text-lg tracking-wide sm:text-xl md:text-2xl mb-4">
+                      User Inferred Information
                     </h3>
-                    <p className="text-sm leading-loose md:text-base">
-                      {userInferredInfo?.user_gender}
-                    </p>
-                    <h3 className="text-lg tracking-wide sm:text-xl md:text-2xl">
-                      Interests
-                    </h3>
-                    <p className="text-sm leading-loose md:text-base">
-                      {userInferredInfo?.user_basic_interests}
-                    </p>
-                    <h3 className="text-lg tracking-wide sm:text-xl md:text-2xl">
-                      User Communication
-                    </h3>
-                    <p className="text-sm leading-loose md:text-base">
-                      {userInferredInfo?.user_communication_style}
-                    </p>
+                    {userInferredInfos.map((userInferredInfo, index) => (
+                      <div key={index}>
+                        <h2 className="text-xl tracking-wide">
+                          Interaction {index + 1}:
+                        </h2>
+                        <h3 className="text-l tracking-wide">Gender</h3>
+                        <p className="text-sm leading-loose text-gray-500">
+                          {userInferredInfo.user_gender}
+                        </p>
+                        <h3 className="text-l tracking-wide">Interests</h3>
+                        <p className="text-sm leading-loose text-gray-500">
+                          {userInferredInfo.user_basic_interests}
+                        </p>
+                        <h3 className="text-l tracking-wide">
+                          Communication style
+                        </h3>
+                        <p className="text-sm leading-loose text-gray-500 mb-6">
+                          {userInferredInfo.user_communication_style}
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
