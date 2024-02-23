@@ -6,6 +6,7 @@ import { JsonOutputFunctionsParser } from "langchain/output_parsers";
 import { Product, UserInteraction } from "./Database";
 import { UserInferredInfo } from "./types";
 import { getServerSession } from "next-auth";
+import { sql } from "@vercel/postgres";
 
 type UserInfoServer = {
   name: string;
@@ -25,15 +26,14 @@ export const generateUserDescriptionFromTheServer: ({
   age,
   userInteractions,
 }) => {
-
   const session = await getServerSession();
 
-  if(!session){
+  if (!session) {
     return {
       user_gender: "",
       user_basic_interests: "",
       user_communication_style: "",
-      success: false
+      success: false,
     };
   }
 
@@ -118,11 +118,20 @@ export const generateUserDescriptionFromTheServer: ({
     )
     .pipe(new JsonOutputFunctionsParser());
 
-  return chain.invoke({
-    products,
-    name,
-    age: age.toString(),
-    interactions,
-  })
-  .then((result: Omit<UserInferredInfo, "success"> ) => ({...result, success: true}));
+  return chain
+    .invoke({
+      products,
+      name,
+      age: age.toString(),
+      interactions,
+    })
+    .then((result: { usage: { tokens: number } }) => {
+      sql`INSERT INTO poc_request (request_date, "user", tokens, comment, app) VALUES
+      ('2021-01-01 00:00:00', 'user1', 100, 'comment1', 'app1')`;
+      return result;
+    })
+    .then((result: Omit<UserInferredInfo, "success">) => ({
+      ...result,
+      success: true,
+    }));
 };
