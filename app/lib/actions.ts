@@ -81,6 +81,11 @@ export const generateUserDescriptionFromTheServer: ({
         modelName: "gpt-3.5-turbo",
         temperature: 0.5,
         maxRetries: 2,
+        callbacks: [
+          {
+            handleLLMEnd: ({llmOutput}) => sql`INSERT INTO poc_request (request_date, "user", tokens, comment, app) VALUES (NOW(), ${session.user?.email}, ${llmOutput?.tokenUsage.totalTokens}, ${null}, 'user-profile-gen')`,
+          },
+        ],
       }).bind({
         functions: [
           {
@@ -124,11 +129,6 @@ export const generateUserDescriptionFromTheServer: ({
       name,
       age: age.toString(),
       interactions,
-    })
-    .then((result: { usage: { tokens: number } }) => {
-      sql`INSERT INTO poc_request (request_date, "user", tokens, comment, app) VALUES
-      ('2021-01-01 00:00:00', 'user1', 100, 'comment1', 'app1')`;
-      return result;
     })
     .then((result: Omit<UserInferredInfo, "success">) => ({
       ...result,
