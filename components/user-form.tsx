@@ -61,10 +61,12 @@ export function UserForm() {
           ],
         })
           .then((newUserInferredInfo) => {
-            setUserInferredInfos((prevUserInferredInfos) => [
-              ...prevUserInferredInfos,
-              newUserInferredInfo,
-            ]);
+            if (newUserInferredInfo.success) {
+              setUserInferredInfos((prevUserInferredInfos) => [
+                ...prevUserInferredInfos,
+                newUserInferredInfo,
+              ]);
+            }
           })
           .finally(() => setLoading(false));
       }}

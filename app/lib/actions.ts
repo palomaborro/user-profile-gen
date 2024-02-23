@@ -5,6 +5,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { JsonOutputFunctionsParser } from "langchain/output_parsers";
 import { Product, UserInteraction } from "./Database";
 import { UserInferredInfo } from "./types";
+import { getServerSession } from "next-auth";
 
 type UserInfoServer = {
   name: string;
@@ -24,6 +25,18 @@ export const generateUserDescriptionFromTheServer: ({
   age,
   userInteractions,
 }) => {
+
+  const session = await getServerSession();
+
+  if(!session){
+    return {
+      user_gender: "",
+      user_basic_interests: "",
+      user_communication_style: "",
+      success: false
+    };
+  }
+
   const products = productDescriptions
     .map((description) => `* ${description}\n\n`)
     .join();
@@ -110,5 +123,6 @@ export const generateUserDescriptionFromTheServer: ({
     name,
     age: age.toString(),
     interactions,
-  });
+  })
+  .then((result: Omit<UserInferredInfo, "success"> ) => ({...result, success: true}));
 };
