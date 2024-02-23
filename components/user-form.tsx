@@ -46,7 +46,6 @@ export function UserForm() {
     <Formik<UserInfoForm>
       initialValues={initialValues}
       onSubmit={(values) => {
-        console.log({ values });
         setLoading(true);
 
         generateUserDescriptionFromTheServer({
