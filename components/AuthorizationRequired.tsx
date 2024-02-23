@@ -9,8 +9,7 @@ const AuthorizationRequired: React.FC<PropsWithChildren> = ({ children }) => {
     const { status } = useSession();
 
     if (status === "unauthenticated") {
-        signIn();
-        return null;
+        return <button onClick={() => signIn()}>Sign in</button>
     }
 
     return <>{children}</>
