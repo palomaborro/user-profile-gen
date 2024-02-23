@@ -12,8 +12,6 @@ export default function Home() {
   }
 
 
-  console.log({ user: session.user })
-
   return (
     <main className="container max-w-[80%] m-auto flex flex-col min-h-screen">
       <header className="py-4">
