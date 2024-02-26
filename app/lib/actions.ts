@@ -7,6 +7,7 @@ import { Product, UserInteraction } from "./Database";
 import { UserInferredInfo } from "./types";
 import { getServerSession } from "next-auth";
 import { sql } from "@vercel/postgres";
+import { headers } from "next/headers";
 
 type UserInfoServer = {
   name: string;
@@ -79,11 +80,22 @@ export const generateUserDescriptionFromTheServer: ({
     .pipe(
       new ChatOpenAI({
         modelName: "gpt-3.5-turbo",
-        temperature: 0.5,
+        temperature: 0.2,
         maxRetries: 2,
         callbacks: [
           {
-            handleLLMEnd: ({llmOutput}) => sql`INSERT INTO poc_request (request_date, "user", tokens, comment, app) VALUES (NOW(), ${session.user?.email}, ${llmOutput?.tokenUsage.totalTokens}, ${null}, 'user-profile-gen')`,
+            handleLLMEnd: ({ llmOutput }) => {
+              const headersList = headers();
+              const request = headersList.get("host");
+
+              if (request !== "localhost:3000") {
+                return sql`INSERT INTO poc_request (request_date, "user", tokens, comment, app) VALUES (NOW(), ${
+                  session.user?.email
+                }, ${
+                  llmOutput?.tokenUsage.totalTokens
+                }, ${null}, 'user-profile-gen')`;
+              }
+            },
           },
         ],
       }).bind({
