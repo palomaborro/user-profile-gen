@@ -246,7 +246,7 @@ export function UserForm() {
                           {userInferredInfo.user_communication_style}
                         </p>
                       </div>
-                    ))}
+                    )).reverse()}
                   </div>
                 </div>
               </div>
