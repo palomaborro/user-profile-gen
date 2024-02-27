@@ -1,5 +1,5 @@
 export type UserInferredInfo = {
-  user_gender: string;
+  user_clustering: string;
   user_basic_interests: string;
   user_communication_style: string;
   success: boolean;
