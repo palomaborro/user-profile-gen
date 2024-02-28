@@ -18,6 +18,13 @@ import {
 } from "../app/lib/Database";
 import { generateUserDescriptionFromTheServer } from "@/app/lib/actions";
 import { UserInferredInfo } from "@/app/lib/types";
+import {
+  USER_CLUSTERING,
+  USER_BASIC_INTERESTS,
+  USER_COMMUNICATION_STYLE,
+  USER_SENTIMENT_ANALYSIS,
+} from "../app/lib/constants";
+import Tag from "./ui/tag";
 
 type UserInfoForm = {
   name: string;
@@ -223,30 +230,46 @@ export function UserForm() {
                     <h3 className="text-lg tracking-wide sm:text-xl md:text-2xl mb-4">
                       User Inferred Information
                     </h3>
-                    {userInferredInfos.map((userInferredInfo, index) => (
-                      <div
-                        key={index}
-                        className="border border-gray-500 shadow-left-lg p-4 mb-4 rounded"
-                      >
-                        <h2 className="text-xl tracking-wide">
-                          Interaction {index + 1}:
-                        </h2>
-                        <h3 className="text-l tracking-wide">Gender</h3>
-                        <p className="text-sm leading-loose text-gray-500">
-                          {userInferredInfo.user_gender}
-                        </p>
-                        <h3 className="text-l tracking-wide">Interests</h3>
-                        <p className="text-sm leading-loose text-gray-500">
-                          {userInferredInfo.user_basic_interests}
-                        </p>
-                        <h3 className="text-l tracking-wide">
-                          Communication style
-                        </h3>
-                        <p className="text-sm leading-loose text-gray-500">
-                          {userInferredInfo.user_communication_style}
-                        </p>
-                      </div>
-                    )).reverse()}
+                    {userInferredInfos
+                      .map((userInferredInfo, index) => (
+                        <div
+                          key={index}
+                          className="border border-gray-500 shadow-left-lg p-4 mb-4 rounded"
+                        >
+                          <h2 className="text-xl tracking-wide">
+                            Interaction {index + 1}:
+                          </h2>
+                          <h3 className="mt-4 text-l tracking-wide">
+                            Clustering
+                          </h3>
+                          <Tag
+                            categories={USER_CLUSTERING}
+                            response={userInferredInfo.user_clustering}
+                          />
+                          <h3 className="mt-2 text-l tracking-wide">
+                            Interests
+                          </h3>
+                          <Tag
+                            categories={USER_BASIC_INTERESTS}
+                            response={userInferredInfo.user_basic_interests}
+                          />
+                          <h3 className="mt-2 text-l tracking-wide">
+                            Communication style
+                          </h3>
+                          <Tag
+                            categories={USER_COMMUNICATION_STYLE}
+                            response={userInferredInfo.user_communication_style}
+                          />
+                          <h3 className="mt-2 text-l tracking-wide">
+                            Sentiment analysis
+                          </h3>
+                          <Tag
+                            categories={USER_SENTIMENT_ANALYSIS}
+                            response={userInferredInfo.user_sentiment_analysis}
+                          />
+                        </div>
+                      ))
+                      .reverse()}
                   </div>
                 </div>
               </div>

@@ -8,6 +8,12 @@ import { UserInferredInfo } from "./types";
 import { getServerSession } from "next-auth";
 import { sql } from "@vercel/postgres";
 import { headers } from "next/headers";
+import {
+  USER_CLUSTERING,
+  USER_BASIC_INTERESTS,
+  USER_COMMUNICATION_STYLE,
+  USER_SENTIMENT_ANALYSIS,
+} from "./constants";
 
 type UserInfoServer = {
   name: string;
@@ -31,9 +37,10 @@ export const generateUserDescriptionFromTheServer: ({
 
   if (!session) {
     return {
-      user_gender: "",
+      user_clustering: "",
       user_basic_interests: "",
       user_communication_style: "",
+      user_sentiment_analysis: "",
       success: false,
     };
   }
@@ -53,7 +60,7 @@ export const generateUserDescriptionFromTheServer: ({
     
     The steps to follow are
     1. The above mentioned information will be given to you.
-    2. You will help me to answer the following facts about the user in the following structure. Stick to the facts and avoid making assumptions. Do not summarize information we already know from the input, deduce new information based on the context we give you.
+    2. You will help me to answer the following facts about the user in the following structure. Select more than one option when possible.
 
 
     * the user name
@@ -66,7 +73,7 @@ export const generateUserDescriptionFromTheServer: ({
     {age}
     ===========================
 
-    * the description of products he has purchased until now
+    * the description of products they have purchased until now
     ===========================
     {products}
     ===========================
@@ -80,7 +87,7 @@ export const generateUserDescriptionFromTheServer: ({
     .pipe(
       new ChatOpenAI({
         modelName: "gpt-3.5-turbo",
-        temperature: 0.2,
+        temperature: 0.5,
         maxRetries: 2,
         callbacks: [
           {
@@ -106,26 +113,48 @@ export const generateUserDescriptionFromTheServer: ({
             parameters: {
               type: "object",
               properties: {
-                user_gender: {
-                  type: "string",
+                user_clustering: {
+                  type: "array",
+                  items: {
+                    type: "string",
+                    enum: USER_CLUSTERING,
+                  },
                   description:
-                    "reason if the user is a man or a woman. Take in consideration the name gender and the rest of facts we know. Peter is usually a man, Mariah a woman.",
+                    "Make a clustering of the user based on the input. Use more than one cluster when possible based on the user_basic_interests. Example: 'Artists, Families, Creative'. If you can't find a cluster, use 'Other' as a fallback option",
                 },
                 user_basic_interests: {
-                  type: "string",
+                  type: "array",
+                  items: {
+                    type: "string",
+                    enum: USER_BASIC_INTERESTS,
+                  },
                   description:
-                    "basic interests and why two sentences. The answer is based on all facts we know. Start you answer with 'The user basic interests are ...'",
+                    "Make a list of the user basic interests. Use more than one interest when possible based on the user_clustering. Example: 'Cooking, Music, Art'. If you can't find an interest, use 'Other' as a fallback option.",
                 },
                 user_communication_style: {
-                  type: "string",
+                  type: "array",
+                  items: {
+                    type: "string",
+                    enum: USER_COMMUNICATION_STYLE,
+                  },
                   description:
-                    "the user communication style and why, in two sentences. Based on the set of free text examples written by the user and the rest of information we know . If there are no interactions, just say there is not enough information. Start you answer with 'The user communication style is ...'",
+                    "Make a list of the user communication style. Use more than one style when possible. Example: 'Respectful, Formal'. If you can't find a style, use 'Other' as a fallback option.",
+                },
+                user_sentiment_analysis: {
+                  type: "array",
+                  items: {
+                    type: "string",
+                    enum: USER_SENTIMENT_ANALYSIS,
+                  },
+                  description:
+                    "Make a list of the user sentiment analysis. Example: 'Supporter, Detractor'. If the user is filing a complaint, use 'Detractor' as a fallback option. If the user is praising the product, use 'Supporter' as a fallback option.",
                 },
               },
               required: [
-                "user_gender",
+                "user_clustering",
                 "user_basic_interests",
                 "user_communication_style",
+                "user_sentiment_analysis",
               ],
             },
           },
