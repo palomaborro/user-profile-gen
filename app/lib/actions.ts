@@ -12,6 +12,7 @@ import {
   USER_CLUSTERING,
   USER_BASIC_INTERESTS,
   USER_COMMUNICATION_STYLE,
+  USER_SENTIMENT_ANALYSIS,
 } from "./constants";
 
 type UserInfoServer = {
@@ -39,6 +40,7 @@ export const generateUserDescriptionFromTheServer: ({
       user_clustering: "",
       user_basic_interests: "",
       user_communication_style: "",
+      user_sentiment_analysis: "",
       success: false,
     };
   }
@@ -112,28 +114,47 @@ export const generateUserDescriptionFromTheServer: ({
               type: "object",
               properties: {
                 user_clustering: {
-                  type: "string",
-                  enum: USER_CLUSTERING,
+                  type: "array",
+                  items: {
+                    type: "string",
+                    enum: USER_CLUSTERING,
+                  },
                   description:
                     "Make a clustering of the user based on the input. Use more than one cluster when possible based on the user_basic_interests. Example: 'Artists, Families, Creative'. If you can't find a cluster, use 'Other' as a fallback option",
                 },
                 user_basic_interests: {
-                  type: "string",
-                  enum: USER_BASIC_INTERESTS,
+                  type: "array",
+                  items: {
+                    type: "string",
+                    enum: USER_BASIC_INTERESTS,
+                  },
                   description:
                     "Make a list of the user basic interests. Use more than one interest when possible based on the user_clustering. Example: 'Cooking, Music, Art'. If you can't find an interest, use 'Other' as a fallback option.",
                 },
                 user_communication_style: {
-                  type: "string",
-                  enum: USER_COMMUNICATION_STYLE,
+                  type: "array",
+                  items: {
+                    type: "string",
+                    enum: USER_COMMUNICATION_STYLE,
+                  },
                   description:
-                    "Make a list of the user communication style. Use more than one style when possible. Example: 'Respectful, Angry, Demanding'. If you can't find a style, use 'Other' as a fallback option.",
+                    "Make a list of the user communication style. Use more than one style when possible. Example: 'Respectful, Formal'. If you can't find a style, use 'Other' as a fallback option.",
+                },
+                user_sentiment_analysis: {
+                  type: "array",
+                  items: {
+                    type: "string",
+                    enum: USER_SENTIMENT_ANALYSIS,
+                  },
+                  description:
+                    "Make a list of the user sentiment analysis. Example: 'Supporter, Detractor'. If the user is filing a complaint, use 'Detractor' as a fallback option. If the user is praising the product, use 'Supporter' as a fallback option.",
                 },
               },
               required: [
                 "user_clustering",
                 "user_basic_interests",
                 "user_communication_style",
+                "user_sentiment_analysis",
               ],
             },
           },

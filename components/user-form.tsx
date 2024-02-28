@@ -22,6 +22,7 @@ import {
   USER_CLUSTERING,
   USER_BASIC_INTERESTS,
   USER_COMMUNICATION_STYLE,
+  USER_SENTIMENT_ANALYSIS,
 } from "../app/lib/constants";
 import Tag from "./ui/tag";
 
@@ -243,27 +244,28 @@ export function UserForm() {
                           </h3>
                           <Tag
                             categories={USER_CLUSTERING}
-                            response={userInferredInfo.user_clustering.split(
-                              ", "
-                            )}
+                            response={userInferredInfo.user_clustering}
                           />
                           <h3 className="mt-2 text-l tracking-wide">
                             Interests
                           </h3>
                           <Tag
                             categories={USER_BASIC_INTERESTS}
-                            response={userInferredInfo.user_basic_interests.split(
-                              ", "
-                            )}
+                            response={userInferredInfo.user_basic_interests}
                           />
-                          <h3 className="mt-2text-l tracking-wide">
+                          <h3 className="mt-2 text-l tracking-wide">
                             Communication style
                           </h3>
                           <Tag
                             categories={USER_COMMUNICATION_STYLE}
-                            response={userInferredInfo.user_communication_style.split(
-                              ", "
-                            )}
+                            response={userInferredInfo.user_communication_style}
+                          />
+                          <h3 className="mt-2 text-l tracking-wide">
+                            Sentiment analysis
+                          </h3>
+                          <Tag
+                            categories={USER_SENTIMENT_ANALYSIS}
+                            response={userInferredInfo.user_sentiment_analysis}
                           />
                         </div>
                       ))

@@ -23,10 +23,9 @@ export const USER_BASIC_INTERESTS = [
 
 export const USER_COMMUNICATION_STYLE = [
   "Respectful",
-  "Angry",
-  "Demanding",
-  "Polite",
-  "Friendly",
   "Formal",
-  "Other",
+  "Casual",
+  "Aggressive",
 ];
+
+export const USER_SENTIMENT_ANALYSIS = ["Supporter", "Detractor"];

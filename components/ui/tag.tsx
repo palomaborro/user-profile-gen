@@ -2,7 +2,7 @@ import React from "react";
 
 type TagProps = {
   categories: string[];
-  response: string[];
+  response: string;
 };
 
 const Tag: React.FC<TagProps> = ({ categories, response }) => {
